@@ -12,21 +12,34 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      
-      - name: Read previous version
-        id: read_version
-        run: echo "::set-output name=version::$(cat version.json | jq -r '.version')"
 
       - name: Read current version
-        id: read_new_version
-        run: echo "::set-output name=new_version::$(cat version.json | jq -r '.version')"
+        id: current_version
+        run: echo "::set-output name=current-version::$(cat version.json | jq -r '.version')"
+        
+      - name: Get last commit
+        id: last_commit
+        run: echo "::set-output name=last-commit::$(git rev-list -n 1 HEAD -- version.json)"
+        if: github.event_name == 'push'
+        
+      - name: Get last version
+        id: last_version
+        run: echo "::set-output name=last-version::$(git show ${{ steps.last_commit.outputs.last-commit }}:version.json | jq -r '.version')"
+        if: steps.last-commit.outputs.last-commit != ''
         
       - name: Compare versions
         id: compare_versions
         run: |
-          if [ "${{ steps.read_version.outputs.version }}" != "${{ steps.read_new_version.outputs.new_version }}" ]; then
+          if [ "${{ steps.last_version.outputs.last-version }}" != "${{ steps.current_version.outputs.current-version }}" ]; then
             echo "Version file has changed"
           else
             echo "Version file has not changed"
             exit 1
           fi
+
+  building:
+     runs-on: ubuntu-latest
+     
+     steps:
+      - name: start build
+        run: echo building!!!
