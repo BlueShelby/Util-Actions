@@ -25,7 +25,7 @@ jobs:
       - name: Get last version
         id: last_version
         run: echo "::set-output name=last-version::$(git show ${{ steps.last_commit.outputs.last-commit }}:version.json | jq -r '.version')"
-        if: steps.last-commit.outputs.last-commit != ''
+        if: steps.last_commit.outputs.last-commit != ''
         
       - name: Compare versions
         id: compare_versions
