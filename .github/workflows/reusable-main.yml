@@ -15,11 +15,11 @@ jobs:
       
       - name: Read previous version
         id: read_version
-        run: echo "::set-output name=version::$(cat version.json)"
+        run: echo "::set-output name=version::$(cat version.json | jq -r '.version')"
 
       - name: Read current version
         id: read_new_version
-        run: echo "::set-output name=new_version::$(cat version.json)"
+        run: echo "::set-output name=new_version::$(cat version.json | jq -r '.version')"
         
       - name: Compare versions
         id: compare_versions
