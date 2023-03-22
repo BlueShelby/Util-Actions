@@ -16,13 +16,13 @@ jobs:
       - name: Get previous version of version check file
         run: |
           git checkout HEAD^ path/to/version_check_file.json
-          PREVIOUS_VERSION=$(jq -r '.version' path/to/version_check_file.json)
+          PREVIOUS_VERSION=$(jq -r '.version' version.json)
           git checkout -
 
       - name: Verify version check file
         run: |
           # Extract the version from the current version check file
-          CURRENT_VERSION=$(jq -r '.version' path/to/version_check_file.json)
+          CURRENT_VERSION=$(jq -r '.version' version.json)
 
           # Compare current version with previous version
           if [[ $CURRENT_VERSION == $PREVIOUS_VERSION ]]; then
