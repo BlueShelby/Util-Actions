@@ -7,17 +7,27 @@ on:
         type: string
 
 jobs:
-  build:
+  verify_version:
     runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    steps:      
-      - uses: actions/checkout@v2
-
-      - name: Set the tag
+      - name: Get previous version of version check file
         run: |
-          if [ -z "${{inputs.tag}}" ]
-          then
-            echo "final_tag=latest" >> $GITHUB_ENV
+          git checkout HEAD^ path/to/version_check_file.json
+          PREVIOUS_VERSION=$(jq -r '.version' path/to/version_check_file.json)
+          git checkout -
+
+      - name: Verify version check file
+        run: |
+          # Extract the version from the current version check file
+          CURRENT_VERSION=$(jq -r '.version' path/to/version_check_file.json)
+
+          # Compare current version with previous version
+          if [[ $CURRENT_VERSION == $PREVIOUS_VERSION ]]; then
+            echo "Version check file has not changed since the previous version."
           else
-            echo "final_tag=${{inputs.tag}}" >> $GITHUB_ENV
+            echo "Version check file has changed since the previous version."
+            exit 1
           fi
