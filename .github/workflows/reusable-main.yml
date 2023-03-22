@@ -21,10 +21,3 @@ jobs:
           else
             echo "final_tag=${{inputs.tag}}" >> $GITHUB_ENV
           fi
-
-
-  last:
-    runs-on: ubuntu-latest
-
-    steps:
-    - run: echo "the end"
