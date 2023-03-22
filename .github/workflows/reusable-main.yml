@@ -15,7 +15,7 @@ jobs:
 
       - name: Get previous version of version check file
         run: |
-          git checkout HEAD^ path/to/version_check_file.json
+          git checkout HEAD^ version.json
           PREVIOUS_VERSION=$(jq -r '.version' version.json)
           git checkout -
 
