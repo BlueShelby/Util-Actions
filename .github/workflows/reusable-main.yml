@@ -22,7 +22,7 @@ jobs:
       - name: Get last commit that modified version file
         id: last_commit
         run: |
-          last_commit=$(git log -1 --pretty=format:%H -- <version.json>)
+          last_commit=$(git log -1 --pretty=format:%H -- version.json)
           echo "::set-output name=last-commit::$last_commit"
         
       - name: Get last version
