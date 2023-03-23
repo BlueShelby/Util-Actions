@@ -17,11 +17,11 @@ jobs:
     - name: Get last version
       id: last-version
       run: |
-        last_version=$(jq -r '.version' file.json)
+        last_version=$(jq -r '.version' version.json)
         echo "::set-output name=last_version::$last_version"
     - name: Check version
       run: |
-        version=$(jq -r '.version' file.json)
+        version=$(jq -r '.version' version.json)
         last_version=${{ steps.last-version.outputs.last_version }}
         if [[ "$version" != "$last_version" ]]; then
           echo "Incorrect version found: $version (last version: $last_version)"
