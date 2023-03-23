@@ -12,36 +12,15 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-        with:
-          ref: ${{ github.head_ref }}
-          
-      - name: Get last commit that modified version file
-        id: last_commit
-        run: |
-          last_commit=$(git log -1 --pretty=format:%H -- version.json)
-          echo "::set-output name=last-commit::$last_commit"
 
-      - name: Read current version
-        id: current_version
-        run: echo "::set-output name=current-version::$(cat version.json | jq -r '.version')"
-        
-      - name: Get Target Json version
-        id: target_version
+      - name: Compare version
         run: |
-          echo "::set-output name=target-version::$(cat version.json | jq -r '.version')"
-        
-      - name: Get last version
-        id: last_version
-        run: echo "::set-output name=version::$(git show ${{ steps.last_commit.outputs.last-commit }}:version.json | jq -r '.version')"
-        if: steps.last_commit.outputs.last-commit != ''
-        
-      - name: Compare versions
-        id: compare_versions
-        run: |
-          if [ "${{ steps.target_version.outputs.target-version }}" != "${{ steps.current_version.outputs.current-version }}" ]; then
-            echo "Version file has changed"
-          else
-            echo "Version file has not changed"
+          FILE_TO_COMPARE="version.json"
+          JSON_KEY="version"
+          MAIN_VALUE=$(jq -r ".$JSON_KEY" origin/main $FILE_TO_COMPARE)
+          FEATURE_VALUE=$(jq -r ".$JSON_KEY" HEAD $FILE_TO_COMPARE)
+          if [ "$MAIN_VALUE" == "$FEATURE_VALUE" ]; then
+            echo "Version was not  updated."
             exit 1
           fi
 
