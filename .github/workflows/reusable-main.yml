@@ -23,7 +23,12 @@ jobs:
 
       - name: Read current version
         id: current_version
-        run: echo "::set-output name=current-version::$(cat version.json | jq -r '.version')"        
+        run: echo "::set-output name=current-version::$(cat version.json | jq -r '.version')"
+        
+      - name: Get Target Json version
+        id: target_version
+        run: |
+          echo "::set-output name=target-version::$(cat version.json | jq -r '.version')"
         
       - name: Get last version
         id: last_version
@@ -33,7 +38,7 @@ jobs:
       - name: Compare versions
         id: compare_versions
         run: |
-          if [ "${{ steps.last_version.outputs.last-version }}" != "${{ steps.current_version.outputs.current-version }}" ]; then
+          if [ "${{ steps.target_version.outputs.target-version }}" != "${{ steps.current_version.outputs.current-version }}" ]; then
             echo "Version file has changed"
           else
             echo "Version file has not changed"
