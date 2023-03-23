@@ -19,12 +19,11 @@ jobs:
         
       - name: Get last commit
         id: last_commit
-        run: echo "::set-output name=last-commit::$(git rev-list -n 1 HEAD -- version.json)"
-        if: github.event_name == 'push'
+        run: echo "::set-output name=last-commit::$(git rev-parse HEAD)"
         
       - name: Get last version
         id: last_version
-        run: echo "::set-output name=last-version::$(git show ${{ steps.last_commit.outputs.last-commit }}:version.json | jq -r '.version')"
+        run: echo "::set-output name=version::$(git show ${{ steps.last_commit.outputs.last-commit }}:version.json | jq -r '.version')"
         if: steps.last_commit.outputs.last-commit != ''
         
       - name: Compare versions
@@ -39,6 +38,7 @@ jobs:
 
   building:
      runs-on: ubuntu-latest
+     needs: [check_version]
      
      steps:
       - name: start build
