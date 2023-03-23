@@ -19,12 +19,14 @@ jobs:
       run: |
         last_version=$(jq -r '.version' version.json)
         echo "::set-output name=last_version::$last_version"
+    - name: Checkout code pr
+      uses: actions/checkout@v2
     - name: Check version
       run: |
         version=$(jq -r '.version' version.json)
         last_version=${{ steps.last-version.outputs.last_version }}
-        if [[ "$version" != "$last_version" ]]; then
-          echo "Incorrect version found: $version (last version: $last_version)"
+        if [[ "$version" == "$last_version" ]]; then
+          echo "Same version found: $version (last version: $last_version)"
           exit 1
         fi
 
