@@ -10,19 +10,23 @@ jobs:
   check_version:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Compare version
-        run: |
-          FILE_TO_COMPARE="version.json"
-          JSON_KEY="version"
-          MAIN_VALUE=$(jq -r ".$JSON_KEY" origin/main $FILE_TO_COMPARE)
-          FEATURE_VALUE=$(jq -r ".$JSON_KEY" HEAD $FILE_TO_COMPARE)
-          if [ "$MAIN_VALUE" == "$FEATURE_VALUE" ]; then
-            echo "Version was not  updated."
-            exit 1
-          fi
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        ref: main
+    - name: Get last version
+      id: last-version
+      run: |
+        last_version=$(jq -r '.version' file.json)
+        echo "::set-output name=last_version::$last_version"
+    - name: Check version
+      run: |
+        version=$(jq -r '.version' file.json)
+        last_version=${{ steps.last-version.outputs.last_version }}
+        if [[ "$version" != "$last_version" ]]; then
+          echo "Incorrect version found: $version (last version: $last_version)"
+          exit 1
+        fi
 
   building:
      runs-on: ubuntu-latest
