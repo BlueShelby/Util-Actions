@@ -34,7 +34,7 @@ jobs:
       run: |
         current_version=${{ steps.get_current_version.outputs.current_version }}
         latest_version=${{ steps.get_latest_version.outputs.latest_version }}
-        if [ "$(printf '%s\n' "$latest_version" "$current_version" | sort -V | head -n1)" = "$current_version" ]; then
+        if [ $(echo -e "${current_version}\n${latest_version}"|sort -V|head -1) != "${latest_version}" ]; then
           echo "Current version ($current_version) is greater than the latest version ($latest_version)"
         else
           echo "Current version ($current_version) is not greater than the latest version ($latest_version)"
