@@ -28,16 +28,12 @@ jobs:
         ref: ${{ inputs.main-branch }}
     - name: Get latest version
       id: get_latest_version
-      run: |
-        latest_version=$(cat ${{ inputs.file-name }} | tr -d '[:space:]')
-        echo "name=latest_version::$latest_version" >> $GITHUB_OUTPUT
+      run: echo "latest_version=$(cat VERSION | tr -d '[:space:]')" >> $GITHUB_OUTPUT
     - name: Checkout version from PR code
       uses: actions/checkout@v3
     - name: Get current version
       id: get_current_version
-      run: |
-        current_version=$(cat ${{ inputs.file-name }} | tr -d '[:space:]')
-        echo "name=current_version::$current_version" >> $GITHUB_OUTPUT
+      run: echo "current_version=$(cat VERSION | tr -d '[:space:]')" >> $GITHUB_OUTPUT
     - name: Validate current version
       run: |
         current_version=${{ steps.get_current_version.outputs.current_version }}
