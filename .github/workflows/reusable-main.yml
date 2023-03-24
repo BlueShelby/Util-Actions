@@ -3,12 +3,20 @@ name: My reusable
 on:
   workflow_call:
     inputs:
-      main_branch: 
+      main-branch: 
+        description: 'main/trunk branch name'
+        required: false
+        default: 'main'
         type: string
-      file: 
+      file-name: 
+        description: 'Name file that contains version'
+        required: false
+        default: 'VERSION'
         type: string
-      key: 
-        type: string
+    outputs:
+      current-version:
+        description: ""
+        value: ${{ jobs.verify_version.outputs.current_version }}
 
 jobs:
   verify_version:
@@ -17,18 +25,18 @@ jobs:
     - name: Checkout main code
       uses: actions/checkout@v2
       with:
-        ref: main
+        ref: ${{ inputs.main-branch }}
     - name: Get latest version
       id: get_latest_version
       run: |
-        latest_version=$(jq -r '.version' version.json)
+        latest_version=$(cat ${{ inputs.file-name }} | tr -d '[:space:]')
         echo "::set-output name=latest_version::$latest_version"
     - name: Checkout PR code
       uses: actions/checkout@v2
     - name: Get current version
       id: get_current_version
       run: |
-        current_version=$(jq -r '.version' version.json)
+        current_version=$(cat ${{ inputs.file-name }} | tr -d '[:space:]')
         echo "::set-output name=current_version::$current_version"
     - name: Compare versions
       run: |
