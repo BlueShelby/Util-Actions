@@ -43,7 +43,7 @@ jobs:
         current_version=${{ steps.get_current_version.outputs.current_version }}
         
         if ! [[ $current_version =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9]+(\.[0-9]+)*)?(\+[0-9]+(\.[0-9]+)*)?$ ]]; then
-          echo "Error: Value is not a valid semver."
+          echo "Error: ($current_version) is not a valid semver."
           exit 1
         fi
     - name: Verify and Compare versions
