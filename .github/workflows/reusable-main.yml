@@ -21,6 +21,8 @@ on:
 jobs:
   verify_version:
     runs-on: ubuntu-latest
+    outputs:
+      current_version: ${{ steps.get_current_version.outputs.current_version }}
     steps:
     - name: Checkout version from main-branch code
       uses: actions/checkout@v3
