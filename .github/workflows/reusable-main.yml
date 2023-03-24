@@ -30,14 +30,14 @@ jobs:
       id: get_latest_version
       run: |
         latest_version=$(cat ${{ inputs.file-name }} | tr -d '[:space:]')
-        echo "::set-output name=latest_version::$latest_version"
+        echo "name=latest_version::$latest_version" >> $GITHUB_OUTPUT
     - name: Checkout version from PR code
       uses: actions/checkout@v3
     - name: Get current version
       id: get_current_version
       run: |
         current_version=$(cat ${{ inputs.file-name }} | tr -d '[:space:]')
-        echo "::set-output name=current_version::$current_version"
+        echo "name=current_version::$current_version" >> $GITHUB_OUTPUT
     - name: Validate current version
       run: |
         current_version=${{ steps.get_current_version.outputs.current_version }}
