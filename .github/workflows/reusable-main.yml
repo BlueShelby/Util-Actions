@@ -14,8 +14,8 @@ on:
         default: 'VERSION'
         type: string
     outputs:
-      current-version:
-        description: ""
+      current_version:
+        description: "Current version"
         value: ${{ jobs.verify_version.outputs.current_version }}
 
 jobs:
