@@ -4,7 +4,7 @@ on:
   workflow_call:
     inputs:
       main-branch: 
-        description: 'main/trunk branch name'
+        description: 'main branch name'
         required: false
         default: 'main'
         type: string
@@ -14,44 +14,44 @@ on:
         default: 'VERSION'
         type: string
     outputs:
-      current_version:
+      branch_version:
         description: "Current version"
-        value: ${{ jobs.verify_version.outputs.current_version }}
+        value: ${{ jobs.verify_version.outputs.branch_version }}
 
 jobs:
   verify_version:
     runs-on: ubuntu-latest
     outputs:
-      current_version: ${{ steps.get_current_version.outputs.current_version }}
+      branch_version: ${{ steps.get_current_version.outputs.branch_version }}
     steps:
     - name: Checkout version from main-branch code
       uses: actions/checkout@v3
       with:
         ref: ${{ inputs.main-branch }}
-    - name: Get latest version
-      id: get_latest_version
-      run: echo "latest_version=$(cat VERSION | tr -d '[:space:]')" >> $GITHUB_OUTPUT
+    - name: Get main branch version
+      id: get_main_version
+      run: echo "main_version=$(cat VERSION | tr -d '[:space:]')" >> $GITHUB_OUTPUT
     - name: Checkout version from PR code
       uses: actions/checkout@v3
-    - name: Get current version
-      id: get_current_version
-      run: echo "current_version=$(cat VERSION | tr -d '[:space:]')" >> $GITHUB_OUTPUT
+    - name: Get branch version
+      id: get_branch_version
+      run: echo "branch_version=$(cat VERSION | tr -d '[:space:]')" >> $GITHUB_OUTPUT
     - name: Validate current version
       run: |
-        current_version=${{ steps.get_current_version.outputs.current_version }}
+        branch_version=${{ steps.get_branch_version.outputs.branch_version }}
         
-        if ! [[ $current_version =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9]+(\.[0-9]+)*)?(\+[0-9]+(\.[0-9]+)*)?$ ]]; then
-          echo "Error: ($current_version) is not a valid semver."
+        if ! [[ $branch_version =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9]+(\.[0-9]+)*)?(\+[0-9]+(\.[0-9]+)*)?$ ]]; then
+          echo "Error: ($branch_version) is not a valid semver."
           exit 1
         fi
     - name: Verify and Compare versions
       run: |
-        current_version=${{ steps.get_current_version.outputs.current_version }}
-        latest_version=${{ steps.get_latest_version.outputs.latest_version }}
+        branch_version=${{ steps.get_branch_version.outputs.branch_version }}
+        main_version=${{ steps.get_main_version.outputs.main_version }}
         
-        if [ $(echo -e "${current_version}\n${latest_version}"|sort -V|head -1) != "${current_version}" ]; then
-          echo "Current version ($current_version) is greater than the latest version ($latest_version)"
+        if [ $(echo -e "${branch_version}\n${main_version}"|sort -V|head -1) != "${branch_version}" ]; then
+          echo "Current version ($branch_version) is greater than the latest version ($main_version)"
         else
-          echo "Current version ($current_version) is not greater than the latest version ($latest_version)"
+          echo "Current version ($branch_version) is not greater than the latest version ($main_version)"
           exit 1
         fi
