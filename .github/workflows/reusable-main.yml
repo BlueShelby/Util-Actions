@@ -15,14 +15,14 @@ on:
         type: string
     outputs:
       branch_version:
-        description: "Current version"
+        description: "Branch version"
         value: ${{ jobs.verify_version.outputs.branch_version }}
 
 jobs:
   verify_version:
     runs-on: ubuntu-latest
     outputs:
-      branch_version: ${{ steps.get_current_version.outputs.branch_version }}
+      branch_version: ${{ steps.get_branch_version.outputs.branch_version }}
     steps:
     - name: Checkout version from main-branch code
       uses: actions/checkout@v3
@@ -36,7 +36,7 @@ jobs:
     - name: Get branch version
       id: get_branch_version
       run: echo "branch_version=$(cat VERSION | tr -d '[:space:]')" >> $GITHUB_OUTPUT
-    - name: Validate current version
+    - name: Validate branch version
       run: |
         branch_version=${{ steps.get_branch_version.outputs.branch_version }}
         
