@@ -49,7 +49,7 @@ jobs:
         branch_version=${{ steps.get_branch_version.outputs.branch_version }}
         main_version=${{ steps.get_main_version.outputs.main_version }}
         
-        if [ -z "$main_version" ] && [ $(echo -e "${branch_version}\n${main_version}"|sort -V|head -1) != "${branch_version}" ]; then
+        if [ "$main_version" == "" ] && [ $(echo -e "${branch_version}\n${main_version}"|sort -V|head -1) != "${branch_version}" ]; then
           echo "Current version ($branch_version) is greater than the latest version ($main_version)"
         else
           echo "Current version ($branch_version) is not greater than the latest version ($main_version)"
